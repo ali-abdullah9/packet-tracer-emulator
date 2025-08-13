@@ -7,7 +7,7 @@ import { NetworkSimulationService } from '../services';
 export class ConnectionController {
   constructor(private simulationService: NetworkSimulationService) {}
 
-  async getAllConnections(req: Request, res: Response): Promise<void> {
+  async getAllConnections(_req: Request, res: Response): Promise<void> {
     try {
       const connections = await Connection.find({}).lean();
       const response: ApiResponse<NetworkConnection[]> = {

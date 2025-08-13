@@ -109,7 +109,7 @@ export function getDefaultDeviceConfig(deviceType: string) {
 }
 
 // Validate device configuration
-export function validateDeviceConfiguration(config: any, deviceType: string): { valid: boolean; errors: string[] } {
+export function validateDeviceConfiguration(config: any, _deviceType: string): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   // Validate hostname

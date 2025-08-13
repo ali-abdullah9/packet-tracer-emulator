@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { NetworkDevice } from '../types';
 
-export interface IDevice extends NetworkDevice, Document {}
+export interface IDevice extends Omit<NetworkDevice, 'id'>, Document {
+  id: string;
+}
 
 const InterfaceSchema = new Schema({
   id: { type: String, required: true },

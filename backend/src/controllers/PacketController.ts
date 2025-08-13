@@ -31,7 +31,7 @@ export class PacketController {
     }
   }
 
-  async getPacketHistory(req: Request, res: Response): Promise<void> {
+  async getPacketHistory(_req: Request, res: Response): Promise<void> {
     try {
       const packets = this.simulationService.getPacketHistory();
       const response: ApiResponse<PacketFlow[]> = {

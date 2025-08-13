@@ -40,7 +40,7 @@ export const createDeviceSchema = Joi.object({
   }).optional()
 });
 
-export const updateDeviceSchema = createDeviceSchema.fork(['type', 'name', 'position'], (schema) => schema.optional());
+export const updateDeviceSchema = createDeviceSchema.fork(['type', 'name', 'position'], (schema: any) => schema.optional());
 
 export const createConnectionSchema = Joi.object({
   source: Joi.string().required(),
@@ -56,7 +56,7 @@ export const createNetworkSchema = Joi.object({
   connections: Joi.array().items(Joi.string()).default([])
 });
 
-export const updateNetworkSchema = createNetworkSchema.fork(['name'], (schema) => schema.optional());
+export const updateNetworkSchema = createNetworkSchema.fork(['name'], (schema: any) => schema.optional());
 
 export const sendPacketSchema = Joi.object({
   source: Joi.string().required(),

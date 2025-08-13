@@ -43,6 +43,9 @@ class Server {
     this.simulationService = new NetworkSimulationService();
     this.socketHandler = new SocketHandler(this.io, this.simulationService);
     
+    // Use the socket handler
+    console.log('Socket handler initialized:', this.socketHandler ? 'Success' : 'Failed');
+    
     this.setupMiddleware();
     this.setupRoutes();
     this.setupErrorHandling();
@@ -68,7 +71,7 @@ class Server {
 
   private setupRoutes(): void {
     // Health check endpoint
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (_req: any, res: any) => {
       res.json({ 
         status: 'ok', 
         timestamp: new Date().toISOString(),

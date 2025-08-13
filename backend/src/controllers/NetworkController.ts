@@ -4,12 +4,12 @@ import { Network } from '../models';
 import { NetworkTopology, ApiResponse } from '../types';
 
 export class NetworkController {
-  async getAllNetworks(req: Request, res: Response): Promise<void> {
+  async getAllNetworks(_req: Request, res: Response): Promise<void> {
     try {
       const networks = await Network.find({}).populate('devices').populate('connections').lean();
       const response: ApiResponse<NetworkTopology[]> = {
         success: true,
-        data: networks as NetworkTopology[]
+        data: networks as unknown as NetworkTopology[]
       };
       res.json(response);
     } catch (error) {
@@ -37,7 +37,7 @@ export class NetworkController {
 
       const response: ApiResponse<NetworkTopology> = {
         success: true,
-        data: network as NetworkTopology
+        data: network as unknown as NetworkTopology
       };
       res.json(response);
     } catch (error) {
@@ -61,7 +61,7 @@ export class NetworkController {
 
       const response: ApiResponse<NetworkTopology> = {
         success: true,
-        data: savedNetwork.toObject() as NetworkTopology,
+        data: savedNetwork.toObject() as unknown as NetworkTopology,
         message: 'Network created successfully'
       };
       res.status(201).json(response);
@@ -96,7 +96,7 @@ export class NetworkController {
 
       const response: ApiResponse<NetworkTopology> = {
         success: true,
-        data: network as NetworkTopology,
+        data: network as unknown as NetworkTopology,
         message: 'Network updated successfully'
       };
       res.json(response);

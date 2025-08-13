@@ -178,11 +178,12 @@ export class NetworkSimulationService extends EventEmitter {
 
   private async simulatePacketTransmission(packet: PacketFlow): Promise<void> {
     // Simulate delay for packet transmission
-    setTimeout(async () => {
-      packet.status = 'received';
-      await Packet.findOneAndUpdate({ id: packet.id }, { status: 'received' });
-      this.emit('packet-flow', packet);
-    }, 1000); // 1 second delay
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    
+    await delay(1000); // 1 second delay
+    packet.status = 'received';
+    await Packet.findOneAndUpdate({ id: packet.id }, { status: 'received' });
+    this.emit('packet-flow', packet);
   }
 
   private generatePacketId(): string {

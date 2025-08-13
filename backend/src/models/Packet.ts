@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { PacketFlow } from '../types';
 
-export interface IPacket extends PacketFlow, Document {}
+export interface IPacket extends Omit<PacketFlow, 'id'>, Document {
+  id: string;
+}
 
 const PacketSchema = new Schema({
   id: { type: String, required: true, unique: true },

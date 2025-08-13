@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { NetworkConnection } from '../types';
 
-export interface IConnection extends NetworkConnection, Document {}
+export interface IConnection extends Omit<NetworkConnection, 'id'>, Document {
+  id: string;
+}
 
 const ConnectionSchema = new Schema({
   id: { type: String, required: true, unique: true },

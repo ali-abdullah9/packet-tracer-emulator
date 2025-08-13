@@ -3,7 +3,7 @@ import { Schema } from 'joi';
 import { ApiResponse } from '../types';
 
 export const validateRequest = (schema: Schema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const { error, value } = schema.validate(req.body);
     
     if (error) {
@@ -15,7 +15,8 @@ export const validateRequest = (schema: Schema) => {
           path: error.details[0].path
         }
       };
-      return res.status(400).json(response);
+      res.status(400).json(response);
+      return;
     }
     
     req.body = value;
@@ -25,10 +26,10 @@ export const validateRequest = (schema: Schema) => {
 
 export const errorHandler = (
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
-) => {
+  _next: NextFunction
+): void => {
   console.error('Error:', err);
 
   const response: ApiResponse = {
@@ -38,13 +39,15 @@ export const errorHandler = (
 
   if (err.name === 'ValidationError') {
     response.error = 'Validation error';
-    response.details = err.message;
-    return res.status(400).json(response);
+    response.details = { message: err.message };
+    res.status(400).json(response);
+    return;
   }
 
   if (err.name === 'MongoError' || err.name === 'MongooseError') {
     response.error = 'Database error';
-    return res.status(500).json(response);
+    res.status(500).json(response);
+    return;
   }
 
   res.status(500).json(response);

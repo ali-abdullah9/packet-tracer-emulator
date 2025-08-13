@@ -7,7 +7,7 @@ import { NetworkSimulationService } from '../services';
 export class DeviceController {
   constructor(private simulationService: NetworkSimulationService) {}
 
-  async getAllDevices(req: Request, res: Response): Promise<void> {
+  async getAllDevices(_req: Request, res: Response): Promise<void> {
     try {
       const devices = await Device.find({}).lean();
       const response: ApiResponse<NetworkDevice[]> = {
@@ -202,7 +202,7 @@ export class DeviceController {
         return;
       }
 
-      const updatedInterface = device.interfaces?.find(iface => iface.id === interfaceId);
+      const updatedInterface = device.interfaces?.find((iface: any) => iface.id === interfaceId);
 
       const response: ApiResponse<NetworkInterface> = {
         success: true,

@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { NetworkTopology } from '../types';
 
-export interface INetwork extends Omit<NetworkTopology, 'devices' | 'connections'>, Document {
+export interface INetwork extends Omit<NetworkTopology, 'id' | 'devices' | 'connections'>, Document {
+  id: string;
   devices: string[];
   connections: string[];
 }

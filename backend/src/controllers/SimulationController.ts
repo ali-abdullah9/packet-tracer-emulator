@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { ApiResponse, PacketFlow } from '../types';
+import { ApiResponse } from '../types';
 import { NetworkSimulationService } from '../services';
 
 export class SimulationController {
   constructor(private simulationService: NetworkSimulationService) {}
 
-  async getStatus(req: Request, res: Response): Promise<void> {
+  async getStatus(_req: Request, res: Response): Promise<void> {
     try {
       const state = this.simulationService.getSimulationState();
       const response: ApiResponse = {
@@ -27,7 +27,7 @@ export class SimulationController {
     }
   }
 
-  async start(req: Request, res: Response): Promise<void> {
+  async start(_req: Request, res: Response): Promise<void> {
     try {
       this.simulationService.startSimulation();
       const response: ApiResponse = {
@@ -44,7 +44,7 @@ export class SimulationController {
     }
   }
 
-  async stop(req: Request, res: Response): Promise<void> {
+  async stop(_req: Request, res: Response): Promise<void> {
     try {
       this.simulationService.stopSimulation();
       const response: ApiResponse = {
@@ -61,7 +61,7 @@ export class SimulationController {
     }
   }
 
-  async reset(req: Request, res: Response): Promise<void> {
+  async reset(_req: Request, res: Response): Promise<void> {
     try {
       this.simulationService.resetSimulation();
       const response: ApiResponse = {

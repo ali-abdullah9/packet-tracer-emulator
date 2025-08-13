@@ -39,7 +39,7 @@ export class SocketHandler {
       socket.on('send-packet', async (data: {
         source: string;
         destination: string;
-        protocol: string;
+        protocol: 'ICMP' | 'TCP' | 'UDP' | 'ARP' | 'DNS';
         payload?: any;
       }) => {
         try {
@@ -101,19 +101,19 @@ export class SocketHandler {
     });
 
     // Listen to simulation service events and broadcast to clients
-    this.simulationService.on('packet-flow', (packet) => {
+    this.simulationService.on('packet-flow', (packet: any) => {
       this.io.emit('packet-flow', packet);
     });
 
-    this.simulationService.on('device-status-changed', (data) => {
+    this.simulationService.on('device-status-changed', (data: any) => {
       this.io.emit('device-status-changed', data);
     });
 
-    this.simulationService.on('simulation-state-changed', (state) => {
+    this.simulationService.on('simulation-state-changed', (state: any) => {
       this.io.emit('simulation-state-changed', state);
     });
 
-    this.simulationService.on('network-topology-updated', (topology) => {
+    this.simulationService.on('network-topology-updated', (topology: any) => {
       this.io.emit('network-topology-updated', topology);
     });
   }
