@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Management Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Device Management Debug Test</h1>
+    
+    <div class="container">
+        <h2>Debug Device Management</h2>
+        <button onclick="debugGetDevices()">Debug Get All Devices</button>
+        <button onclick="debugCreateDevice()">Debug Create Device</button>
+        <button onclick="debugSimulationStatus()">Debug Simulation Status</button>
+        <button onclick="testHealthDetailed()">Test Health (Detailed)</button>
+    </div>
+
+    <div class="container">
+        <h2>Debug Output</h2>
+        <div id="debug-output" class="output">Click any button above to see detailed debug information...</div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('debug-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : (type === 'success' ? 'success' : '');
+            output.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('debug-output').innerHTML = '';
+        }
+
+        async function testHealthDetailed() {
+            clearLog();
+            log('Starting health check...');
+            
+            try {
+                log(`Making request to: ${API_BASE}/health`);
+                const response = await fetch(`${API_BASE}/health`);
+                log(`Response status: ${response.status} ${response.statusText}`);
+                log(`Response headers: ${JSON.stringify([...response.headers.entries()], null, 2)}`);
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data, null, 2)}`, 'success');
+            } catch (error) {
+                log(`Health check failed: ${error.message}`, 'error');
+                log(`Error details: ${error.stack}`, 'error');
+            }
+        }
+
+        async function debugGetDevices() {
+            clearLog();
+            log('Starting Get All Devices test...');
+            
+            try {
+                log(`Making request to: ${API_BASE}/api/devices`);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`${API_BASE}/api/devices`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                log(`Response status: ${response.status} ${response.statusText}`);
+                log(`Response headers: ${JSON.stringify([...response.headers.entries()], null, 2)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data, null, 2)}`, 'success');
+                
+                if (data && data.success) {
+                    log(`Found ${data.data ? data.data.length : 0} devices`, 'success');
+                } else {
+                    log('Response indicates failure', 'error');
+                }
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    log('Request timed out after 10 seconds', 'error');
+                } else {
+                    log(`Get devices failed: ${error.message}`, 'error');
+                    log(`Error details: ${error.stack}`, 'error');
+                }
+            }
+        }
+
+        async function debugCreateDevice() {
+            clearLog();
+            log('Starting Create Device test...');
+            
+            try {
+                const deviceData = {
+                    type: 'router',
+                    name: `Debug-Router-${Date.now()}`,
+                    position: { x: 100, y: 100 }
+                };
+                
+                log(`Device data to send: ${JSON.stringify(deviceData, null, 2)}`);
+                log(`Making POST request to: ${API_BASE}/api/devices`);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                
+                const response = await fetch(`${API_BASE}/api/devices`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(deviceData),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                log(`Response status: ${response.status} ${response.statusText}`);
+                log(`Response headers: ${JSON.stringify([...response.headers.entries()], null, 2)}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+                }
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    log('Request timed out after 10 seconds', 'error');
+                } else {
+                    log(`Create device failed: ${error.message}`, 'error');
+                    log(`Error details: ${error.stack}`, 'error');
+                }
+            }
+        }
+
+        async function debugSimulationStatus() {
+            clearLog();
+            log('Starting Simulation Status test...');
+            
+            try {
+                log(`Making request to: ${API_BASE}/api/simulation/status`);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                
+                const response = await fetch(`${API_BASE}/api/simulation/status`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                log(`Response status: ${response.status} ${response.statusText}`);
+                log(`Response headers: ${JSON.stringify([...response.headers.entries()], null, 2)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    log('Request timed out after 10 seconds', 'error');
+                } else {
+                    log(`Get simulation status failed: ${error.message}`, 'error');
+                    log(`Error details: ${error.stack}`, 'error');
+                }
+            }
+        }
+
+        // Test health on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, testing connection...');
+            testHealthDetailed();
+        });
+    </script>
+</body>
+</html>
