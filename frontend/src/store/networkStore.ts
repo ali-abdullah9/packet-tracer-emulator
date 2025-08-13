@@ -13,6 +13,7 @@ interface NetworkStore extends SimulationState {
   
   // Packet actions
   addPacket: (packet: Omit<PacketFlow, 'id'>) => void;
+  updatePacket: (packetId: string, updates: Partial<PacketFlow>) => void;
   clearPackets: () => void;
   
   // Simulation actions
@@ -77,6 +78,14 @@ export const useNetworkStore = create<NetworkStore>((set, get) => ({
     };
     set((state) => ({
       packets: [...state.packets, packet],
+    }));
+  },
+
+  updatePacket: (packetId, updates) => {
+    set((state) => ({
+      packets: state.packets.map((p) =>
+        p.id === packetId ? { ...p, ...updates } : p
+      ),
     }));
   },
 

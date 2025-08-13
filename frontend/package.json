@@ -9,13 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@reactflow/background": "^11.3.14",
+    "@reactflow/controls": "^11.2.14",
+    "@reactflow/core": "^11.11.4",
+    "@reactflow/minimap": "^11.7.14",
     "@types/socket.io-client": "^1.4.36",
     "@types/uuid": "^10.0.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
     "lucide-react": "^0.539.0",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
     "reactflow": "^11.11.4",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.1",
@@ -24,13 +30,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5"
   }
 }

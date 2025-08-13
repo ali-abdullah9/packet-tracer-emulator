@@ -1,0 +1,208 @@
+{
+  "info": {
+    "name": "Packet Tracer Backend API",
+    "description": "Complete API collection for testing the Packet Tracer Network Emulator backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Get All Devices",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/devices",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "devices"]
+        }
+      }
+    },
+    {
+      "name": "Create Router",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"router\",\n  \"name\": \"Main-Router\",\n  \"position\": {\n    \"x\": 100,\n    \"y\": 100\n  },\n  \"interfaces\": [\n    {\n      \"id\": \"gig0/0\",\n      \"name\": \"GigabitEthernet0/0\",\n      \"ipAddress\": \"192.168.1.1\",\n      \"subnetMask\": \"255.255.255.0\",\n      \"status\": \"up\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/devices",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "devices"]
+        }
+      }
+    },
+    {
+      "name": "Create Switch",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"switch\",\n  \"name\": \"Main-Switch\",\n  \"position\": {\n    \"x\": 300,\n    \"y\": 100\n  },\n  \"interfaces\": [\n    {\n      \"id\": \"fa0/1\",\n      \"name\": \"FastEthernet0/1\",\n      \"status\": \"up\"\n    },\n    {\n      \"id\": \"fa0/2\",\n      \"name\": \"FastEthernet0/2\",\n      \"status\": \"up\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/devices",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "devices"]
+        }
+      }
+    },
+    {
+      "name": "Create PC",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"pc\",\n  \"name\": \"PC-1\",\n  \"position\": {\n    \"x\": 500,\n    \"y\": 100\n  },\n  \"interfaces\": [\n    {\n      \"id\": \"eth0\",\n      \"name\": \"Ethernet0\",\n      \"ipAddress\": \"192.168.1.10\",\n      \"subnetMask\": \"255.255.255.0\",\n      \"status\": \"up\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/devices",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "devices"]
+        }
+      }
+    },
+    {
+      "name": "Get Simulation Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/simulation/status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "simulation", "status"]
+        }
+      }
+    },
+    {
+      "name": "Send Ping",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"source\": \"pc-1\",\n  \"destination\": \"192.168.1.1\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/packets/ping",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "packets", "ping"]
+        }
+      }
+    },
+    {
+      "name": "Create Connection",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"source\": \"router-1\",\n  \"target\": \"switch-1\",\n  \"sourceInterface\": \"gig0/0\",\n  \"targetInterface\": \"fa0/1\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/connections",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "connections"]
+        }
+      }
+    },
+    {
+      "name": "Get All Connections",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/connections",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "connections"]
+        }
+      }
+    },
+    {
+      "name": "Start Simulation",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/simulation/start",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "simulation", "start"]
+        }
+      }
+    },
+    {
+      "name": "Stop Simulation",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/simulation/stop",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "simulation", "stop"]
+        }
+      }
+    }
+  ]
+}
