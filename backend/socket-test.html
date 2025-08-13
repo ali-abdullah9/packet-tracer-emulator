@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.io Test</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.io Test Console</h1>
+    <div id="messages"></div>
+    <button onclick="testSocket()">Connect & Test Socket</button>
+    
+    <script>
+        function addMessage(msg) {
+            const div = document.createElement('div');
+            div.textContent = new Date().toLocaleTimeString() + ': ' + msg;
+            document.getElementById('messages').appendChild(div);
+        }
+
+        function testSocket() {
+            const socket = io('http://localhost:5000');
+            
+            socket.on('connect', () => {
+                addMessage('✅ Connected to Socket.io server');
+                
+                // Join simulation room
+                socket.emit('join-simulation', { room: 'test-room' });
+                
+                // Send a test packet
+                socket.emit('send-packet', {
+                    source: 'pc-1',
+                    destination: 'server-1',
+                    protocol: 'TCP',
+                    payload: { message: 'Test packet from socket' }
+                });
+            });
+
+            socket.on('joined-simulation', (data) => {
+                addMessage('🏠 Joined room: ' + data.room);
+            });
+
+            socket.on('packet-flow', (packet) => {
+                addMessage('📦 Packet flow: ' + JSON.stringify(packet));
+            });
+
+            socket.on('device-status-changed', (data) => {
+                addMessage('🔧 Device status: ' + JSON.stringify(data));
+            });
+
+            socket.on('network-topology-updated', (topology) => {
+                addMessage('🌐 Topology updated: ' + JSON.stringify(topology));
+            });
+
+            socket.on('disconnect', () => {
+                addMessage('❌ Disconnected from server');
+            });
+        }
+    </script>
+</body>
+</html>

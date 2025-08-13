@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packet Tracer Backend Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Packet Tracer Backend API Test</h1>
+    
+    <div class="container">
+        <h2>Server Status</h2>
+        <div id="server-status" class="status info">Testing connection...</div>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+    </div>
+
+    <div class="container">
+        <h2>Device Management</h2>
+        <button onclick="getDevices()">Get All Devices</button>
+        <button onclick="createDevice()">Create New Device</button>
+        <button onclick="getSimulationStatus()">Get Simulation Status</button>
+    </div>
+
+    <div class="container">
+        <h2>Packet Operations</h2>
+        <button onclick="sendPing()">Send Ping Packet</button>
+    </div>
+
+    <div class="container">
+        <h2>Socket.io Test</h2>
+        <button onclick="connectSocket()">Connect to Socket.io</button>
+        <button onclick="sendSocketPacket()">Send Packet via Socket</button>
+        <div id="socket-status" class="status info">Socket not connected</div>
+    </div>
+
+    <div class="container">
+        <h2>API Response</h2>
+        <div id="output" class="output">Click any button above to test the API...</div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let socket = null;
+
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+
+        function updateOutput(data) {
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testHealth() {
+            try {
+                updateStatus('server-status', 'Testing...', 'info');
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                updateOutput(data);
+                updateStatus('server-status', 'Server is running!', 'success');
+            } catch (error) {
+                updateOutput({ error: error.message });
+                updateStatus('server-status', 'Server connection failed', 'error');
+            }
+        }
+
+        async function getDevices() {
+            try {
+                const response = await fetch(`${API_BASE}/api/devices`);
+                const data = await response.json();
+                updateOutput(data);
+            } catch (error) {
+                updateOutput({ error: error.message });
+            }
+        }
+
+        async function createDevice() {
+            try {
+                const deviceData = {
+                    type: 'router',
+                    name: 'Test-Router',
+                    position: { x: Math.floor(Math.random() * 500), y: Math.floor(Math.random() * 500) }
+                };
+                
+                const response = await fetch(`${API_BASE}/api/devices`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(deviceData)
+                });
+                const data = await response.json();
+                updateOutput(data);
+            } catch (error) {
+                updateOutput({ error: error.message });
+            }
+        }
+
+        async function getSimulationStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/simulation/status`);
+                const data = await response.json();
+                updateOutput(data);
+            } catch (error) {
+                updateOutput({ error: error.message });
+            }
+        }
+
+        async function sendPing() {
+            try {
+                const pingData = {
+                    source: 'pc-1',
+                    destination: '192.168.1.1'
+                };
+                
+                const response = await fetch(`${API_BASE}/api/packets/ping`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(pingData)
+                });
+                const data = await response.json();
+                updateOutput(data);
+            } catch (error) {
+                updateOutput({ error: error.message });
+            }
+        }
+
+        function connectSocket() {
+            try {
+                socket = io(API_BASE);
+                
+                socket.on('connect', () => {
+                    updateStatus('socket-status', 'Connected to Socket.io!', 'success');
+                    socket.emit('join-simulation', { room: 'test-room' });
+                });
+
+                socket.on('joined-simulation', (data) => {
+                    updateOutput({ socketEvent: 'joined-simulation', data });
+                });
+
+                socket.on('packet-flow', (packet) => {
+                    updateOutput({ socketEvent: 'packet-flow', packet });
+                });
+
+                socket.on('network-topology-updated', (data) => {
+                    updateOutput({ socketEvent: 'network-topology-updated', data });
+                });
+
+                socket.on('disconnect', () => {
+                    updateStatus('socket-status', 'Disconnected from Socket.io', 'error');
+                });
+
+            } catch (error) {
+                updateStatus('socket-status', 'Socket connection failed', 'error');
+                updateOutput({ error: error.message });
+            }
+        }
+
+        function sendSocketPacket() {
+            if (!socket || !socket.connected) {
+                updateStatus('socket-status', 'Socket not connected!', 'error');
+                return;
+            }
+
+            const packetData = {
+                source: 'pc-1',
+                destination: 'server-1',
+                protocol: 'TCP',
+                payload: { message: 'Hello from Socket.io!' }
+            };
+
+            socket.emit('send-packet', packetData);
+            updateOutput({ socketSent: packetData });
+        }
+
+        // Test health endpoint on page load
+        window.addEventListener('load', testHealth);
+    </script>
+</body>
+</html>
